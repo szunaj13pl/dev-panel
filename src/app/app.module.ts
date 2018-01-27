@@ -6,7 +6,8 @@ import {AppComponent} from './app.component';
 import {HomepageComponent} from './homepage/homepage.component';
 import {ServerComponent} from './homepage/server/server.component';
 import {DockerComponent} from './homepage/server/docker/docker.component';
-import {DockerApiService} from './services/dockerApi.service';
+import {DockerApiService} from './services/DockerApi.service';
+import {DockerContainersService} from './services/DockerContainers.service';
 
 
 @NgModule({
@@ -19,7 +20,7 @@ import {DockerApiService} from './services/dockerApi.service';
     imports: [
         BrowserModule
     ],
-    providers: [DockerApiService],
+    providers: [DockerApiService, DockerContainersService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

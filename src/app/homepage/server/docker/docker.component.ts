@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DockerApiService} from '../../../services/dockerApi.service';
+import {DockerApiService} from '../../../services/DockerApi.service';
 
 @Component({
     selector: 'app-docker',
@@ -12,6 +12,7 @@ export class DockerComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.dockerApi.test();
     }
 
 }
