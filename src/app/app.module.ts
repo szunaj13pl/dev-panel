@@ -3,11 +3,17 @@ import { NgModule } from '@angular/core';
 
 
 import { AppComponent } from './app.component';
+import { HomepageComponent } from './homepage/homepage.component';
+import { ServerComponent } from './homepage/server/server.component';
+import { DockerComponent } from './homepage/server/docker/docker.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomepageComponent,
+    ServerComponent,
+    DockerComponent
   ],
   imports: [
     BrowserModule
