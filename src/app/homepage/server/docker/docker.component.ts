@@ -12,7 +12,7 @@ export class DockerComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.dockerApi.test();
+        // this.dockerApi.test();
     }
 
 }
