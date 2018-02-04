@@ -15,6 +15,7 @@ export class DockerApiService {
     public containersList$: Observable<Container[]> = this.containersListSubject.asObservable();
 
     private dataObservable: Observable<any>;
+    private newContainers: Container[];
 
     constructor(private httpClient: HttpClient,
                 private dockerContainers: DockerContainersService) {
@@ -24,26 +25,24 @@ export class DockerApiService {
         return this.httpClient.get<any>('http://localhost:2375/containers/json', {params});
     }
 
-    test() {
-        console.log('test RUN');
+    getData() {
+        this.http().subscribe((data) => {
 
-        // this.dataObservable.subscribe(x => console.log('dataObservable', x));
-        this.http().subscribe();
+
+            this.newContainers = data.map(item => {
+                return new Container(
+                    item.Id,
+                    item.Image,
+                    item.State,
+                    item.Status
+                );
+            }, e => console.log('Error: ', e));
+
+            // console.log('service', this.newContainers);
+
+            this.initializeContainersList(this.newContainers);
+        });
     }
-
-    // http(params: HttpParams = new HttpParams().set('all', 'true')): Observable<any> {
-    //     return this.httpClient.get<JSON>('http://localhost:2375/containers/json', {params}).map(data => {
-    //         const containersArray = data.map(item => {
-    //             return new Container(
-    //                 item.Id,
-    //                 item.Image,
-    //                 item.State,
-    //                 item.Status
-    //             );
-    //         });
-    //         this.initializeContainersList(containersArray);
-    //     });
-    // }
 
     initializeContainersList(newList: Container[]) {
         this.containersListSubject.next(_.cloneDeep(newList));
@@ -58,4 +57,9 @@ export class DockerApiService {
         return _.cloneDeep(this.containersListSubject.getValue());
     }
 
+    checkContainerListForUpdate(container: Container) {
+        return this.newContainers.find(function (obj) {
+            return obj.id === container.id;
+        });
+    }
 }

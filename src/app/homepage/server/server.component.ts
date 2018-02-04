@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import 'rxjs/add/operator/skipWhile';
 import 'rxjs/add/operator/takeWhile';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
@@ -15,71 +15,62 @@ export class ServerComponent implements OnInit, OnDestroy {
 
     private containers: Container[] = [];
 
+    private updateServer: boolean;
     private display: boolean;
-
-    private alive: boolean; // used to unsubscribe from the TimerObservable
-                            // when OnDestroy is called.
     private interval: number;
+    private alive: boolean; // used to unsubscribe from the TimerObservable when OnDestroy is called.
 
 
-    constructor(private dockerApiService: DockerApiService) {
+    constructor(private dockerApiService: DockerApiService, private zone: NgZone) {
         this.display = false;
         this.alive = true;
-        this.interval = 1000;
+        this.interval = 2000;
+        this.updateServer = true;
     }
 
     ngOnInit() {
+        this.dockerApiService.getData();
 
         TimerObservable.create(0, this.interval)
             .takeWhile(() => this.alive)
-            .subscribe(() => {
-                this.dockerApiService.http()
-                    .subscribe((data) => {
-                        this.containers = data.map(item => {
-                            return new Container(
-                                item.Id,
-                                item.Image,
-                                item.State,
-                                item.Status
-                            );
-                        });
-                        console.log('stacoverflow', this.containers);
-                        if (!this.display) {
-                            this.display = true;
-                        }
-                    });
-            }, e => console.log('Error: ', e));
+            .subscribe(
+                () => {
 
+                    this.dockerApiService.getData();
+                    if (!this.display) {
+                        this.display = true;
+                    }
 
-        // this.dockerApiService.containersList$.subscribe(
-        //     data => {
-        //         console.log('server.component', data);
-        //         this.containers = data;
-        //     },
-        //     e => {
-        //         console.log(e);
-        //     },
-        //     () => {
-        //         console.log('Complete');
-        //     }
-        // );
+                });
+
+        this.dockerApiService.containersList$.subscribe(
+            data => {
+
+                const containersListIsEmpty = this.containers.length === 0;
+
+                if ((this.updateServer) || (containersListIsEmpty)) {
+                    this.containers = data;
+                    this.updateServer = false;
+                    // console.log(data, 'server component', this.containers);
+                }
+
+            });
     }
 
     ngOnDestroy() {
         this.alive = false; // switches your TimerObservable off
     }
 
-    getNextData() {
-        this.dockerApiService.test();
-    }
-
-    fetchData() {
-        this.dockerApiService.http();
-    }
-
     logData() {
         console.log(this.containers);
+
         this.alive = !this.alive;
         console.log(this.alive);
     }
+
+    updateServerEvent($event) {
+        // console.log('event');
+        this.updateServer = $event;
+    }
+
 }
