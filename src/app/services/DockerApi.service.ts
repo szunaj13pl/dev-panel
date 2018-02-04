@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Container} from '../models/Container.model';
+import {Host} from '../models/Host.model';
 import {DockerContainersService} from './DockerContainers.service';
 
 @Injectable()
@@ -14,20 +15,53 @@ export class DockerApiService {
 
     public containersList$: Observable<Container[]> = this.containersListSubject.asObservable();
 
-    private dataObservable: Observable<any>;
     private newContainers: Container[];
+
 
     constructor(private httpClient: HttpClient,
                 private dockerContainers: DockerContainersService) {
     }
 
-    http(params: HttpParams = new HttpParams().set('all', 'true')): Observable<any> {
-        return this.httpClient.get<any>('http://localhost:2375/containers/json', {params});
+    test() {
+        this.httpClient.post('http://127.0.0.1:2375/containers/44985cdd43bad41a688ede7a93629ba99184ca555054855050d502a76ac023d5/start', {}).subscribe(
+            data => console.log(data));
     }
 
-    getData() {
-        this.http().subscribe((data) => {
+    http(host: Host,
+         params: any = {},
+         category?: string = 'containers',
+         task?: string = '',
+         method?: string = 'get',
+         variable?: string): Observable<any> {
 
+        let url = `http://${host.address}:${host.port}/${category}/${task}`;
+
+        if (variable) {
+            url = `http://${host.address}:${host.port}/${category}/${variable}/${task}`;
+        }
+
+        switch (method) {
+            case 'post':
+                // console.log(url, method, task, variable);
+                return this.httpClient.post(url, params);
+            case 'get':
+                return this.httpClient.get<any>(url, {params});
+            case 'options':
+                break;
+            case 'delete':
+                break;
+        }
+        console.log('no method for API matched');
+    }
+
+    getData(host: Host) {
+        this.http(host,
+            new HttpParams().set('all', 'true'), 'containers'
+            , 'json',
+            'get'
+        ).subscribe((data) => {
+
+            // console.log(host);
 
             this.newContainers = data.map(item => {
                 return new Container(
@@ -40,21 +74,12 @@ export class DockerApiService {
 
             // console.log('service', this.newContainers);
 
-            this.initializeContainersList(this.newContainers);
+            this.updateContainersList(this.newContainers);
         });
     }
 
-    initializeContainersList(newList: Container[]) {
+    updateContainersList(newList: Container[]) {
         this.containersListSubject.next(_.cloneDeep(newList));
-    }
-
-    testData() {
-        this.dataObservable.subscribe(x => console.log(x));
-        console.log('testData');
-    }
-
-    private cloneContainers() {
-        return _.cloneDeep(this.containersListSubject.getValue());
     }
 
     checkContainerListForUpdate(container: Container) {
@@ -62,4 +87,28 @@ export class DockerApiService {
             return obj.id === container.id;
         });
     }
+
+    containerOperations(container: Container, host: Host, operation: string) {
+
+        console.groupCollapsed('Parameters');
+        console.log(container, host, operation);
+        console.groupEnd();
+
+        const request = this.http(host, {}, 'containers', operation, 'post', container.id);
+
+        request.subscribe(data => console.log(data),
+            err => {
+                console.groupCollapsed('Error');
+                console.log('Error: ' + err.error);
+                console.log('Name: ' + err.name);
+                console.log('Message: ' + err.message);
+                console.log('Status: ' + err.status);
+                console.groupEnd();
+            });
+    }
+
+    private cloneContainers() {
+        return _.cloneDeep(this.containersListSubject.getValue());
+    }
+
 }

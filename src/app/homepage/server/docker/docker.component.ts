@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
 import {Container} from '../../../models/Container.model';
+import {Host} from '../../../models/Host.model';
 import {DockerApiService} from '../../../services/DockerApi.service';
 
 @Component({
@@ -12,6 +13,7 @@ import {DockerApiService} from '../../../services/DockerApi.service';
 export class DockerComponent implements OnInit {
 
     @Input() container: Container;
+    @Input() host: Host;
     @Output() updateServer = new EventEmitter<boolean>();
 
     private interval: number;
@@ -60,6 +62,11 @@ export class DockerComponent implements OnInit {
 
     }
 
+
+    operations(operation: string, host: Host = this.host, container: Container = this.container) {
+        // console.log('start ', container, 'host', host);
+        this.dockerApiService.containerOperations(container, host, 'start');
+    }
 
 }
 

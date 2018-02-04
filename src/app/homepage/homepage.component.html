@@ -1,4 +1,4 @@
 <p>
     homepage works!
 </p>
-<app-server></app-server>
+<app-server *ngFor="let host of hosts" [host]="host"></app-server>

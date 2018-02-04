@@ -1,7 +1,8 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 import 'rxjs/add/operator/takeWhile';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
 import {Container} from '../../models/Container.model';
+import {Host} from '../../models/Host.model';
 import {DockerApiService} from '../../services/DockerApi.service';
 
 
@@ -12,6 +13,7 @@ import {DockerApiService} from '../../services/DockerApi.service';
 })
 export class ServerComponent implements OnInit, OnDestroy {
 
+    @Input() host: Host;
     private containers: Container[] = [];
 
     private updateServer: boolean;
@@ -28,14 +30,13 @@ export class ServerComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.dockerApiService.getData();
 
         TimerObservable.create(0, this.interval)
             .takeWhile(() => this.alive)
             .subscribe(
                 () => {
 
-                    this.dockerApiService.getData();
+                    this.dockerApiService.getData(this.host);
                     if (!this.display) {
                         this.display = true;
                     }
@@ -71,5 +72,10 @@ export class ServerComponent implements OnInit, OnDestroy {
         // console.log('event');
         this.updateServer = $event;
     }
+
+    test() {
+        this.dockerApiService.test();
+    }
+
 
 }
