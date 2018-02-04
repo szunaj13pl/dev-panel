@@ -1,5 +1,4 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import 'rxjs/add/operator/skipWhile';
 import 'rxjs/add/operator/takeWhile';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
 import {Container} from '../../models/Container.model';
@@ -24,7 +23,7 @@ export class ServerComponent implements OnInit, OnDestroy {
     constructor(private dockerApiService: DockerApiService, private zone: NgZone) {
         this.display = false;
         this.alive = true;
-        this.interval = 2000;
+        this.interval = 1000;
         this.updateServer = true;
     }
 

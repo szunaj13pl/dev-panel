@@ -1,9 +1,8 @@
 <p>
     server works!
 </p>
-<button (click)="getNextData()" type="button" class="btn btn-link">getData</button>
 <button (click)="logData()" type="button" class="btn btn-link">logContainers and stop updating</button>
-<button (click)="updateAll = true" type="button" class="btn btn-link">Update All</button>
+<button (click)="updateServerEvent(true)" type="button" class="btn btn-link">Update All</button>
 
 <app-docker *ngFor="let container of containers" [container]="container"
             (updateServer)="updateServerEvent($event)"></app-docker>

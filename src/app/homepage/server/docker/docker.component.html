@@ -1,8 +1,10 @@
-<hr>
+<div *ngIf="this.display">
 
-<!--{{container.id}} - -->
-{{container.image}} -
-{{container.uptime}} -
-{{container.online}}
-<button (click)="checkForUpdate()" type="button" class="btn btn-primary">update</button>
+    <hr>
 
+    <!--{{container.id}} - -->
+    {{container.image}} -
+    {{container.uptime}} -
+    {{container.online}}
+
+</div>
