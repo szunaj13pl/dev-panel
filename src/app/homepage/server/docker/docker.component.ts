@@ -65,7 +65,7 @@ export class DockerComponent implements OnInit {
 
     operations(operation: string, host: Host = this.host, container: Container = this.container) {
         // console.log('start ', container, 'host', host);
-        this.dockerApiService.containerOperations(container, host, 'start');
+        this.dockerApiService.containerOperations(container, host, operation);
     }
 
 }
