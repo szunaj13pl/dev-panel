@@ -1,15 +1,81 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
+import 'rxjs/add/operator/takeWhile';
+import {TimerObservable} from 'rxjs/observable/TimerObservable';
+import {Container} from '../../models/Container.model';
+import {Host} from '../../models/Host.model';
+import {DockerApiService} from '../../services/DockerApi.service';
+
 
 @Component({
-  selector: 'app-server',
-  templateUrl: './server.component.html',
-  styleUrls: ['./server.component.css']
+    selector: 'app-server',
+    templateUrl: './server.component.html',
+    styleUrls: ['./server.component.scss']
 })
-export class ServerComponent implements OnInit {
+export class ServerComponent implements OnInit, OnDestroy {
 
-  constructor() { }
+    @Input() host: Host;
+    private containers: Container[] = [];
 
-  ngOnInit() {
-  }
+    private updateServer: boolean;
+    private display: boolean;
+    private interval: number;
+    private alive: boolean; // used to unsubscribe from the TimerObservable when OnDestroy is called.
+
+
+    constructor(private dockerApiService: DockerApiService, private zone: NgZone) {
+        this.display = false;
+        this.alive = true;
+        this.interval = 1000;
+        this.updateServer = true;
+    }
+
+    ngOnInit() {
+
+        TimerObservable.create(0, this.interval)
+            .takeWhile(() => this.alive)
+            .subscribe(
+                () => {
+
+                    this.dockerApiService.getData(this.host);
+                    if (!this.display) {
+                        this.display = true;
+                    }
+
+                });
+
+        this.dockerApiService.containersList$.subscribe(
+            data => {
+
+                const containersListIsEmpty = this.containers.length === 0;
+
+                if ((this.updateServer) || (containersListIsEmpty)) {
+                    this.containers = data;
+                    this.updateServer = false;
+                    // console.log(data, 'server component', this.containers);
+                }
+
+            });
+    }
+
+    ngOnDestroy() {
+        this.alive = false; // switches your TimerObservable off
+    }
+
+    logData() {
+        console.log(this.containers);
+
+        this.alive = !this.alive;
+        console.log(this.alive);
+    }
+
+    updateServerEvent($event) {
+        // console.log('event');
+        this.updateServer = $event;
+    }
+
+    test() {
+        this.dockerApiService.test();
+    }
+
 
 }
