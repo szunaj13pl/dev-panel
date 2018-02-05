@@ -29,7 +29,7 @@ export class DockerApiService {
 
     http(host: Host,
          params: any = {},
-         category?: string = 'containers',
+         category: string = 'containers',
          task?: string = '',
          method?: string = 'get',
          variable?: string): Observable<any> {
