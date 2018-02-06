@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 import {TimerObservable} from 'rxjs/observable/TimerObservable';
+import {Subscription} from 'rxjs/Subscription';
 import {Container} from '../../../models/Container.model';
 import {Host} from '../../../models/Host.model';
 import {DockerApiService} from '../../../services/DockerApi.service';
@@ -19,6 +20,7 @@ export class DockerComponent implements OnInit {
     private interval: number;
     private display: boolean;
     private alive: boolean;
+    private logs: Subscription;
 
     constructor(private dockerApiService: DockerApiService) {
         this.interval = 1000;
@@ -67,6 +69,33 @@ export class DockerComponent implements OnInit {
         // console.log('start ', container, 'host', host);
         this.dockerApiService.containerOperations(container, host, operation);
     }
+
+
+    getLogs() {
+        this.dockerApiService.getLogs(this.container, this.host, 'logs').subscribe(data => {
+            console.log(data);
+            this.logs = data;
+            // return data;
+            // },
+            // err => {
+            //     console.groupCollapsed('Error');
+            //     console.log('Error: ' + err.error);
+            //     console.log('Name: ' + err.name);
+            //     console.log('Message: ' + err.message);
+            //     console.log('Status: ' + err.status);
+            //     console.groupEnd();
+        });
+
+    }
+
+    getLogsStream() {
+        this.dockerApiService.getLogsStream(this.container, this.host, 'attach').subscribe(data => {
+            console.log(data);
+            this.logs = data;
+        });
+
+    }
+
 
 }
 

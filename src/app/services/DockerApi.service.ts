@@ -23,8 +23,8 @@ export class DockerApiService {
     }
 
     test() {
-        this.httpClient.post('http://127.0.0.1:2375/containers/44985cdd43bad41a688ede7a93629ba99184ca555054855050d502a76ac023d5/start', {}).subscribe(
-            data => console.log(data));
+        // this.httpClient.post('http://127.0.0.1:2375/containers/44985cdd43bad41a688ede7a93629ba99184ca555054855050d502a76ac023d5/start', {}).subscribe(
+        //     data => console.log(data));
     }
 
     http(host: Host,
@@ -107,8 +107,33 @@ export class DockerApiService {
             });
     }
 
+    getLogs(container: Container, host: Host, operation: string) {
+        const params = new HttpParams()
+            .append('follow', 'false')
+            .append('stdout', 'true')
+            .append('stderr', 'true')
+            .append('since', '0')
+            .append('until', '0')
+            .append('timestamps', 'true')
+            .append('tail', '200');
+
+        return this.http(host, params, 'containers', operation, 'get', container.id);
+
+    }
+
     private cloneContainers() {
         return _.cloneDeep(this.containersListSubject.getValue());
     }
 
+    getLogsStream(container: Container, host: Host, operation: string) {
+        const params = new HttpParams()
+            .append('detachKeys', '')
+            .append('logs', 'true')
+            .append('stream', 'true')
+            .append('stdout', 'true')
+            .append('stderr', 'true')
+            .append('stdin', 'true');
+
+        return this.http(host, params, 'containers', operation, 'post', container.id);
+    }
 }
