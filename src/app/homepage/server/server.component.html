@@ -5,6 +5,18 @@
 <button (click)="updateServerEvent(true)" type="button" class="btn btn-link">Update All</button>
 <button (click)="test()" type="button" class="btn btn-warning">Test</button>
 
-<app-docker *ngFor="let container of containers" [container]="container" [host]="this.host"
-            (updateServer)="updateServerEvent($event)"></app-docker>
+
+<ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+
+    <ngb-panel title="{{ host.name }}">
+        <ng-template ngbPanelContent>
+
+
+            <app-docker *ngFor="let container of containers" [container]="container" [host]="this.host"
+                        (updateServer)="updateServerEvent($event)"></app-docker>
+
+        </ng-template>
+    </ngb-panel>
+
+</ngb-accordion>
 

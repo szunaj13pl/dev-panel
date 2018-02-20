@@ -13,7 +13,7 @@ export class HomepageComponent implements OnInit {
             port: 2375,
         },
         // {
-        //     name: 'localhost',
+        //     name: 'host 1',
         //     address: 'docker-host1.3s.pl',
         //     port: 2375,
         // }

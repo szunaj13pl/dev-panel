@@ -30,8 +30,8 @@ export class DockerApiService {
     http(host: Host,
          params: any = {},
          category: string = 'containers',
-         task?: string = '',
-         method?: string = 'get',
+         task: string = '',
+         method: string = 'get',
          variable?: string): Observable<any> {
 
         let url = `http://${host.address}:${host.port}/${category}/${task}`;

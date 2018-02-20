@@ -1,7 +1,7 @@
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import {AppComponent} from './app.component';
 import {HomepageComponent} from './homepage/homepage.component';
@@ -20,7 +20,8 @@ import {DockerContainersService} from './services/DockerContainers.service';
     ],
     imports: [
         BrowserModule,
-        HttpClientModule
+        HttpClientModule,
+        NgbModule.forRoot(),
     ],
     providers: [DockerApiService, DockerContainersService],
     bootstrap: [AppComponent]

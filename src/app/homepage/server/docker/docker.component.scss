@@ -1,0 +1,26 @@
+ul {
+  display: inline-grid;
+  grid-template-areas: "name state uptime buttons";
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+li {
+  list-style-type: none;
+
+}
+
+.buttons {
+  grid-area: buttons;
+}
+
+.name {
+  grid-area: name;
+}
+
+.uptime {
+  grid-area: uptime;
+}
+
+.state {
+  grid-area: state;
+}
