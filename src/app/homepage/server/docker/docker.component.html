@@ -1,3 +1,20 @@
-<p>
-  docker works!
-</p>
+<div *ngIf="this.display">
+
+    <hr>
+    <ul>
+        <!--<li>    {{container.id}} -        </li>-->
+        <li class="name"> {{container.image}}</li>
+        <li class="uptime"> {{container.uptime}}</li>
+        <li class="state"> {{container.online}}</li>
+        <li class="buttons">
+            <button (click)="operations('start')" type="button" class="btn btn-success">start</button>
+            <button (click)="operations('stop')" type="button" class="btn btn-primary">stop</button>
+            <button (click)="operations('restart')" type="button" class="btn btn-secondary">restart</button>
+            <button (click)="operations('kill')" type="button" class="btn btn-danger">kill</button>
+            <button (click)="getLogs()" type="button" class="btn btn-dark">logs</button>
+            <button (click)="getLogsStream()" type="button" class="btn btn-dark">logs stream</button>
+        </li>
+    </ul>
+
+
+</div>
